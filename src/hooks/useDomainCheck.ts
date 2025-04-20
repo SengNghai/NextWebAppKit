@@ -31,8 +31,8 @@ export const useDomainCheck = (domain: string) => {
       const result: DomainStatus = { ...status };
 
       try {
-        // ✅ 访问测试：使用 `fetch()` 并检测 `response.status`
-        const response = await fetch(`https://${domain}`, { method: "GET", mode: "cors" });
+        // ✅ 通过 Next.js API 代理访问，避免 CORS 限制
+        const response = await fetch(`/api/proxy?domain=${domain}`);
 
         if (response.status >= 200 && response.status < 400) {
           result.statusCode = response.status;
@@ -47,21 +47,21 @@ export const useDomainCheck = (domain: string) => {
 
       try {
         // ✅ 查询 ICP 备案
-        const icpResponse = await fetch(`https://beian.miit.gov.cn/api/query?domain=${domain}`);
+        const icpResponse = await fetch(`/api/icp-check?domain=${domain}`);
         const icpData = await icpResponse.json();
         result.icpBlocked = icpData?.isBlocked ?? false;
       } catch {}
 
       try {
-        // ✅ 解析 DNS（优化国内域名）
-        const dnsResponse = await fetch(`https://1.1.1.1/dns-query?name=${domain}&type=A`);
+        // ✅ 解析 DNS
+        const dnsResponse = await fetch(`/api/dns-check?domain=${domain}`);
         const dnsData = await dnsResponse.json();
         result.dnsBlocked = !dnsData?.Answer;
       } catch {}
 
       try {
         // ✅ 获取 WHOIS 信息
-        const whoisResponse = await fetch(`https://whois.example.com/api/query?domain=${domain}`);
+        const whoisResponse = await fetch(`/api/whois-check?domain=${domain}`);
         const whoisData = await whoisResponse.json();
         result.whoisBlocked = whoisData?.isBlocked ?? false;
       } catch {}
