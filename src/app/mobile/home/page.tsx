@@ -17,7 +17,14 @@ export default function HomePage() {
             <p>content-</p>
             <p>content-</p>
             <p>content-</p>
-            <p>content-</p>
+            <div>
+                <span>content-</span>
+                <span>content-</span>
+                <span>content-</span>
+                <BasicPopover content="Hello, this is a custom popover!" placement="bottom">
+                    <Button color="primary">点我</Button>
+                </BasicPopover>
+            </div>
             <p>content-</p>
             <p>content-</p>
             <p>content-</p>
