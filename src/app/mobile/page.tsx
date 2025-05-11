@@ -1,14 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { pxToRem, getRealViewportHeight } from "~/lib/utils/common";
 import styles from "./styles.module.scss";
 import { Button } from "antd-mobile";
+import BasicPopover from "~/components/BasicPopover";
+
 
 export default function Page() {
   // ✅ 初始值设定为 `null`，确保 SSR 渲染不影响 HTML 结构
   const [realHeight, setRealHeight] = useState<number | null>(null);
   const [isClient, setIsClient] = useState(false);
+
+  const popoverRef = useRef(null);
+  const [visible, setVisible] = useState(false);
 
   // ✅ 获取真实可用高度
   useEffect(() => {
@@ -28,81 +33,88 @@ export default function Page() {
 
   return (
     <div className={styles.mobile}>
-      <div className={styles.header} style={{  position: "sticky", top: 0, zIndex: 1000, backgroundColor: "pink", width: "100%"}}>
+      <div className={styles.header} style={{ position: "sticky", top: 0, zIndex: 1000, backgroundColor: "pink", width: "100%" }}>
         header
       </div>
 
       {/* ✅ 仅在浏览器环境渲染 `content`，避免 SSR 错误 */}
       <div className={styles.content} >
-          <div>
-            <p>{realHeight}</p>
-            <Button color="primary" style={{ width: pxToRem(200), height: pxToRem(50), fontSize: pxToRem(16) }}>Button</Button>
-          </div>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-</p>
-          <p>content-我到底了</p>
+        <div>
+          <p>{realHeight}</p>
+          <Button color="primary" style={{ width: pxToRem(200), height: pxToRem(50), fontSize: pxToRem(16) }}>Button</Button>
+
+
+          <BasicPopover content="Hello, this is a custom popover!" placement="bottom">
+            <Button color="primary">点我</Button>
+          </BasicPopover>
+
         </div>
+
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-</p>
+        <p>content-我到底了</p>
+      </div>
 
       <div className={styles.footer} style={{ position: "sticky", bottom: 0, zIndex: 1000, backgroundColor: "pink", width: "100%" }}>
         footer
