@@ -42,5 +42,30 @@ export default function Provider({ children }: { children: React.ReactNode }) {
     };
   }, [setRemBase]);
 
+  useEffect(() => {
+    const registerServiceWorker = async () => {
+      if (!("serviceWorker" in navigator)) {
+        console.warn("Service Worker is not supported in this browser.");
+        return;
+      }
+  
+      try {
+        const registration = await navigator.serviceWorker.register("/sw.js");
+        console.log("✅ Service Worker registered:", registration);
+  
+        // ✅ 监听 `controllerchange` 事件，确保 Service Worker 激活
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+          console.log("✅ Service Worker 控制变更，已激活");
+        });
+  
+      } catch (error) {
+        console.error("❌ Service Worker 注册失败:", error);
+      }
+    };
+  
+    registerServiceWorker();
+  }, []);
+  
+
   return <>{children}</>;
 }

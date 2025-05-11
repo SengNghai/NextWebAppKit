@@ -12,11 +12,17 @@
     background-color: #fff;
 }
 
-.content {
+.contentOne {
   flex: 1;
-  overflow-y: auto;
+  overflow: visible; /* ✅ 确保 sticky 能正常工作 */
   background-color: #f0f0f0;
-  height: calc(100vh - px2rem(100));
+  height: calc(100% - px2rem(100));
+}
+.contentTown {
+  flex: 1;
+  overflow: visible; /* ✅ 确保 sticky 能正常工作 */
+  background-color: #f0f0f0;
+  height: calc(100% - px2rem(50));
 }
 
 .footer {
@@ -26,4 +32,14 @@
   text-align: center;
   color: #333;
   background-color: #fff;
+  
+}
+.tabs {
+  position: "-webkit-sticky"; /* ✅ 兼容 Safari */
+  position: "sticky";
+  bottom: 0;
+  z-index: 1000;
+  background-color: pink;
+  width: 100%;
+  font-size: px2rem(16);
 }

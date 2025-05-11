@@ -1,10 +1,1 @@
-const CACHE_NAME = "pwa-cache-v1";
-const urlsToCache = ["/", "/home", "/dashboard"]; // 关键页面
-
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache);
-    })
-  );
-});
+let l=0;self.addEventListener("push",e=>{try{var t=e.data?e.data.json():{},n=t.title||"通知",i={body:t.body||"您有新消息！",icon:"/icon.png",data:{url:t.url||"/"}};l+=t.count||1,e.waitUntil(self.registration.showNotification(n,i).then(()=>self.clients.matchAll({type:"window",includeUncontrolled:!0}).then(clients=>{clients.forEach(e=>{e.postMessage({type:"UPDATE_BADGE",unreadCount:l})})})))}catch(e){console.error("❌ Push 事件处理失败:",e)}}),self.addEventListener("notificationclick",e=>{e.notification.close();let t=e.notification.data?.url||"/";l=Math.max(0,l-1),e.waitUntil(self.clients.matchAll({type:"window",includeUncontrolled:!0}).then(clients=>{for(var e of clients)if(e.url.includes(self.location.origin)&&"focus"in e)return e.focus();return self.clients.openWindow(t)}))}),self.addEventListener("install",e=>{console.log("✅ Service Worker 正在安装...",e)}),self.addEventListener("activate",e=>{console.log("✅ Service Worker 激活成功"),e.waitUntil(self.clients.claim())});
