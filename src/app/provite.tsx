@@ -12,6 +12,7 @@ export default function Provider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // ✅ 确保 `window` 可用 (防止 SSR 运行)
     if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+      console.log("开启调试工具");
       import("eruda").then((eruda) => eruda.default.init()); // ✅ 仅在客户端动态加载 `eruda`
     }
 
@@ -40,7 +41,7 @@ export default function Provider({ children }: { children: React.ReactNode }) {
         requestAnimationFrame(handleResize); // ✅ 替代 `setTimeout`，确保无延迟优化
       });
     };
-  }, [setRemBase]);
+  }, [setRemBase, searchParams]);
 
   useEffect(() => {
     const registerServiceWorker = async () => {
