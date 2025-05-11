@@ -4,26 +4,30 @@
  * @param baseSize 设计稿的 `1rem`（默认 100）
  */
 export const setRemBase = (pageWidth = 750, baseSize = 100) => {
+  const updateFontSize = () => {
+    const html = document.documentElement;
+    const screenWidth = html.clientWidth;
 
-    const updateFontSize = () => {
-      const html = document.documentElement;
-      let fontSize = (baseSize * html.clientWidth) / pageWidth;
+    // ✅ 只有当屏幕宽度 <= 750px 时才进行缩放，大于 750px 直接保持 `baseSize`
+    let fontSize = screenWidth <= pageWidth ? (baseSize * screenWidth) / pageWidth : baseSize;
+
+    html.style.fontSize = `${fontSize}px`;
+
+    // ✅ 修复 WebKit 字体缩放问题
+    const computedFontSize = parseFloat(getComputedStyle(html).fontSize);
+    if (fontSize !== computedFontSize) {
+      fontSize = (fontSize * fontSize) / computedFontSize;
       html.style.fontSize = `${fontSize}px`;
-  
-      // ✅ 修复 WebKit 字体缩放问题
-      const computedFontSize = parseFloat(getComputedStyle(html).fontSize);
-      if (fontSize !== computedFontSize) {
-        fontSize = (fontSize * fontSize) / computedFontSize;
-        html.style.fontSize = `${fontSize}px`;
-      }
-    };
-  
-    updateFontSize(); // ✅ 页面加载时立即计算字体大小
-  
-    window.addEventListener("resize", () => {
-      requestAnimationFrame(updateFontSize); // ✅ 替代 `setTimeout`，确保无延迟优化
-    });
+    }
   };
+
+  updateFontSize(); // ✅ 页面加载时立即计算字体大小
+
+  window.addEventListener("resize", () => {
+    requestAnimationFrame(updateFontSize); // ✅ 替代 `setTimeout`，确保无延迟优化
+  });
+};
+
   
   /**
    * 计算 `px` → `rem`，确保适配 `html` 的 `font-size`

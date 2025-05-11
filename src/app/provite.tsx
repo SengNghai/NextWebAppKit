@@ -22,22 +22,22 @@ export default function Provider({ children }: { children: React.ReactNode }) {
     const handleResize = debounce(setRemBase, 100);
 
     window.addEventListener("resize", () => {
-      requestAnimationFrame(setRemBase); // ✅ 替代 `setTimeout`，确保无延迟优化
+      requestAnimationFrame(handleResize); // ✅ 替代 `setTimeout`，确保无延迟优化
     });
     window.addEventListener("orientationchange", () => {
-      requestAnimationFrame(setRemBase); // ✅ 替代 `setTimeout`，确保无延迟优化
+      requestAnimationFrame(handleResize); // ✅ 替代 `setTimeout`，确保无延迟优化
     });
     // **页面加载时初始化**
     document.addEventListener("DOMContentLoaded", () => {
-      requestAnimationFrame(setRemBase); // ✅ 替代 `setTimeout`，确保无延迟优化
+      requestAnimationFrame(handleResize); // ✅ 替代 `setTimeout`，确保无延迟优化
     });
 
     return () => {
       window.removeEventListener("resize", () => {
-        requestAnimationFrame(setRemBase); // ✅ 替代 `setTimeout`，确保无延迟优化
+        requestAnimationFrame(handleResize); // ✅ 替代 `setTimeout`，确保无延迟优化
       });
       window.removeEventListener("orientationchange", () => {
-        requestAnimationFrame(setRemBase); // ✅ 替代 `setTimeout`，确保无延迟优化
+        requestAnimationFrame(handleResize); // ✅ 替代 `setTimeout`，确保无延迟优化
       });
     };
   }, [setRemBase]);
