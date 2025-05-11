@@ -8,9 +8,11 @@ import { Button } from "antd-mobile";
 export default function Page() {
   // ✅ 初始值设定为 `null`，确保 SSR 渲染不影响 HTML 结构
   const [realHeight, setRealHeight] = useState<number | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
   // ✅ 获取真实可用高度
   useEffect(() => {
+    setIsClient(true);
     if (typeof window !== "undefined") {
       const updateHeight = () => {
         setRealHeight(getRealViewportHeight()); // ✅ 获取真实可用高度
@@ -21,6 +23,8 @@ export default function Page() {
       return () => window.removeEventListener("resize", updateHeight);
     }
   }, []);
+
+  if (!isClient) return null; // 避免 SSR 期间渲染不匹配
 
   return (
     <div className={styles.mobile}>
