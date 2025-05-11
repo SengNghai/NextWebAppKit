@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import webpush from 'web-push';
 import { privateVapidKey, publicVapidKey } from '~/lib/utils/pushNotification';
 

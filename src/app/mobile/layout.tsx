@@ -1,11 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { pxToRem, getRealViewportHeight } from "~/lib/utils/common";
+import { useState, useEffect } from "react";
+// import {  getRealViewportHeight } from "~/lib/utils/common";
 import styles from "./styles.module.scss";
-import { Button } from "antd-mobile";
-import BasicPopover from "~/components/BasicPopover";
-import Link from 'next/link'
 import { useRouter, usePathname } from "next/navigation";
 
 
@@ -17,23 +14,23 @@ export default function MobileLayout({
   children: React.ReactNode;
 }>) {
   // ✅ 初始值设定为 `null`，确保 SSR 渲染不影响 HTML 结构
-  const [realHeight, setRealHeight] = useState<number | null>(null);
+  // const [realHeight, setRealHeight] = useState<number | null>(null);
   const [isClient, setIsClient] = useState(false);
 
-  const popoverRef = useRef(null);
-  const [visible, setVisible] = useState(false);
-  const [active, setActive] = useState<string>('/mobile/home')
+
   const router = useRouter();
   const pathName = usePathname();
 
   useEffect(() => {
     console.log("当前 URL:", router);
     console.log("当前 URL Name:", pathName);
-  }, [router]);
+  }, [router, pathName]);
 
   // ✅ 获取真实可用高度
+  
   useEffect(() => {
     setIsClient(true);
+    /*
     if (typeof window !== "undefined") {
       const updateHeight = () => {
         setRealHeight(getRealViewportHeight()); // ✅ 获取真实可用高度
@@ -43,7 +40,9 @@ export default function MobileLayout({
       window.addEventListener("resize", updateHeight);
       return () => window.removeEventListener("resize", updateHeight);
     }
+    */
   }, []);
+  
 
   const tabs = [
     {

@@ -19,7 +19,7 @@ interface IPushSubscription {
 }
 
 // 存储订阅信息的数组
-let subscriptions: IPushSubscription[] = [];
+const subscriptions: IPushSubscription[] = [];
 
 // OPTIONS 方法: 支持预检请求，处理 CORS 问题
 export async function OPTIONS() {

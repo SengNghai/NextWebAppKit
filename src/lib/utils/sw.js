@@ -1,4 +1,4 @@
-/* global self clients caches Notification fetch event request response */
+/* global self */
 let unreadCount = 0; // 未读消息数量
 
 self.addEventListener("push", (event) => {

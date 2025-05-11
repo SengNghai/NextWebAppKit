@@ -1,5 +1,3 @@
-import { NextResponse } from "next/server";
-
 // OPTIONS 方法: 处理预检请求
 export async function OPTIONS() {
   return new Response(null, {

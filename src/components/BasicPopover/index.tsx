@@ -36,7 +36,6 @@ export default function Popover({ content, trigger = "click", placement = "right
     if (!popoverRef.current || !buttonRef.current) return;
 
     const popoverRect = popoverRef.current.getBoundingClientRect();
-    const buttonRect = buttonRef.current.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
@@ -96,3 +95,11 @@ export default function Popover({ content, trigger = "click", placement = "right
     </div>
   );
 }
+
+/*
+import BasicPopover from "~/components/BasicPopover";
+
+<BasicPopover content="Hello, this is a custom popover!" placement="bottom">
+  <Button color="primary">点我</Button>
+</BasicPopover>
+*/

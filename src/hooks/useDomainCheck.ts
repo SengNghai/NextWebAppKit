@@ -70,7 +70,7 @@ export const useDomainCheck = (domain: string) => {
     };
 
     checkDomainStatus();
-  }, [domain]);
+  }, [domain, status]);
 
   return status;
 };

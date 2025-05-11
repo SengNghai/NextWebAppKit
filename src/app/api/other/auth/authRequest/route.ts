@@ -1,46 +1,25 @@
-const refreshToken = async (expiredToken: string) => {
-    try {
-      const response = await fetch('/api/refreshToken', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token: expiredToken }),
-      });
-  
-      const data = await response.json();
-      if (response.ok && data.token) {
-        localStorage.setItem('token', data.token); // 更新 Token
-      }
-      return data.token;
-    } catch (error) {
-      console.error('Error refreshing token:', error);
+// OPTIONS 方法: 处理预检请求
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204, // 使用 204 状态码表示无内容
+    headers: {
+      'Access-Control-Allow-Origin': '*', // 允许所有来源
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
+}
+
+// GET 方法: 返回简单的 JSON 数据，同时支持跨域
+export async function POST() {
+  return new Response(
+    JSON.stringify({ message: 'Hello, world!' }),
+    {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*', // 确保允许跨域
+      },
     }
-  };
-  
-  export const authRequest = async (url: string, options: RequestInit) => {
-    let token = localStorage.getItem('token');
-  
-    if (!token) {
-      throw new Error('User not authenticated');
-    }
-  
-    options.headers = {
-      ...options.headers,
-      Authorization: `Bearer ${token}`,
-    };
-  
-    const response = await fetch(url, options);
-  
-    // 如果返回 401 未授权，则尝试续约 Token
-    if (response.status === 401) {
-      token = await refreshToken(token);
-      if (token) {
-        options.headers.Authorization = `Bearer ${token}`;
-        return fetch(url, options); // 重试请求
-      }
-    }
-  
-    return response;
-  };
-  
+  );
+}

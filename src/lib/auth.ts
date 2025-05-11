@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 /**
  * JWT 密钥
@@ -11,11 +11,11 @@ export const generateToken = (payload: object): string => {
 };
 
 // 验证 JWT Token
-export const verifyToken = (token: string): any => {
+export const verifyToken = (token: string): JwtPayload | null => {
   try {
-    return jwt.verify(token, JWT_SECRET);
+    return jwt.verify(token, JWT_SECRET) as JwtPayload;
   } catch (error) {
-    throw new Error('Invalid or expired token');
+    throw new Error('Invalid or expired token', error as Error);
   }
 };
 

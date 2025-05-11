@@ -16,7 +16,7 @@ export async function GET(req: Request) {
         headers: { "Access-Control-Allow-Origin": "*" },
       });
     } catch (error) {
-      return new Response(JSON.stringify({ error: "域名无法访问" }), { status: 500 });
+      return new Response(JSON.stringify({ error: `域名无法访问 ${(error as Error).message}` }), { status: 500 });
     }
   }
   
