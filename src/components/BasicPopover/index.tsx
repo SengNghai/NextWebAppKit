@@ -3,23 +3,23 @@
 import { useState, ReactNode, useEffect, useRef } from "react";
 
 interface PopoverProps {
-  content: ReactNode; // 气泡内容
-  trigger?: "click" | "hover"; // 触发方式
-  placement?: "top" | "bottom" | "left" | "right"; // 位置
-  children: ReactNode; // 触发 Popover 的组件
+  content: ReactNode;
+  trigger?: "click" | "hover";
+  placement?: "top" | "bottom" | "left" | "right";
+  children: ReactNode;
 }
 
 export default function Popover({ content, trigger = "click", placement = "right", children }: PopoverProps) {
   const [visible, setVisible] = useState(false);
-  const [adjustedPlacement, setAdjustedPlacement] = useState(placement);
   const popoverRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
+  const [adjustedStyles, setAdjustedStyles] = useState<Record<string, string>>({});
 
   const handleToggle = () => setVisible(!visible);
   const handleMouseEnter = () => trigger === "hover" && setVisible(true);
   const handleMouseLeave = () => trigger === "hover" && setVisible(false);
 
-  // ✅ 点击空白处关闭 Popover
+  // ✅ 监听全局点击事件，点击空白处关闭 Popover
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
@@ -31,28 +31,66 @@ export default function Popover({ content, trigger = "click", placement = "right
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ✅ 确保气泡内容不会超出浏览器窗口
+  // ✅ 计算 Popover 位置，防止内容溢出屏幕
   useEffect(() => {
     if (!popoverRef.current || !buttonRef.current) return;
-
+  
     const popoverRect = popoverRef.current.getBoundingClientRect();
+    const buttonRect = buttonRef.current.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
-
-    if (popoverRect.right > viewportWidth) {
-      setAdjustedPlacement("left");
-    } else if (popoverRect.left < 0) {
-      setAdjustedPlacement("right");
-    } else if (popoverRect.top < 0) {
-      setAdjustedPlacement("bottom");
-    } else if (popoverRect.bottom > viewportHeight) {
-      setAdjustedPlacement("top");
+  
+    let left = buttonRect.left + buttonRect.width / 2 - popoverRect.width / 2; // 默认居中
+    let top = buttonRect.bottom + 10; // 默认下方弹出
+  
+    // ✅ 按钮贴近左侧时，固定 Popover 在 `left: 10px`
+    if (buttonRect.left < 20) {
+      left = 10;
     }
+  
+    // ✅ 按钮贴近右侧时，避免 Popover 过度溢出
+    if (popoverRect.right > viewportWidth) {
+      left = viewportWidth - popoverRect.width - 10;
+    }
+  
+    // ✅ 按钮贴近底部时，调整 Popover 到按钮上方
+    if (popoverRect.bottom > viewportHeight) {
+      top = buttonRect.top - popoverRect.height - 10;
+    }
+  
+    setAdjustedStyles({ top: `${top}px`, left: `${left}px` });
   }, [visible]);
+  
+  
 
   return (
     <div style={{ position: "relative", display: "inline-block" }} ref={buttonRef} onClick={handleToggle} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      <div className="relative">
       {children}
+       {/* ✅ 气泡箭头，始终对齐按钮中心 */}
+      
+      {visible && (
+        <div
+            style={{
+              position: "absolute",
+              width: "10px",
+              height: "10px",
+              backgroundColor: "#fff",
+              border: "1px solid #ccc",
+              zIndex: 999,
+              left: "50%",
+              transform: "translateX(-50%) rotate(45deg)"
+                // ...(placement === "bottom" && { top: "-5px", left: "50%", transform: "translateX(-50%) rotate(45deg)" }),
+              // ...(placement === "top" && { bottom: "15px", left: "50%", transform: "translateX(-50%) rotate(45deg)" }),
+              // ...(placement === "bottom" && { top: "-5px", left: "50%", transform: "translateX(-50%) rotate(45deg)" }),
+              // ...(placement === "left" && { right: "-5px", top: "50%", transform: "translateY(-50%) rotate(45deg)" }),
+              // ...(placement === "right" && { left: "-5px", top: "50%", transform: "translateY(-50%) rotate(45deg)" }),
+            }}
+          />
+      )}
+       
+      </div>
+      
       {visible && (
         <div
           ref={popoverRef}
@@ -64,42 +102,19 @@ export default function Popover({ content, trigger = "click", placement = "right
             padding: "8px",
             zIndex: 1000,
             whiteSpace: "nowrap",
-            maxWidth: "200px", // ✅ 限制最大宽度，避免超出屏幕
-            overflow: "hidden", // ✅ 处理气泡内部内容超长问题
-            ...(adjustedPlacement === "top" && { bottom: "100%", left: "50%", transform: "translateX(-50%)" }),
-            ...(adjustedPlacement === "bottom" && { top: "100%", left: "50%", transform: "translateX(-50%)" }),
-            ...(adjustedPlacement === "left" && { right: "100%", top: "50%", transform: "translateY(-50%)" }),
-            ...(adjustedPlacement === "right" && { left: "100%", top: "50%", transform: "translateY(-50%)" }),
+            maxWidth: "250px", // ✅ 限制最大宽度，避免超出屏幕
+            overflow: "hidden",
+            ...adjustedStyles, // ✅ 调整 Popover 位置，防止溢出
+            ...(placement === "top" && { bottom: "100%", left: "50%", transform: "translateX(-50%)" }),
+            ...(placement === "bottom" && { top: "120%", left: "50%", transform: "translateX(-50%)" }),
+            ...(placement === "left" && { right: "100%", top: "50%", transform: "translateY(-50%)" }),
+            ...(placement === "right" && { left: "100%", top: "50%", transform: "translateY(-50%)" }),
           }}
         >
-          {/* ✅ 添加三角箭头，并让它随 placement 自动调整 */}
-          <div
-            style={{
-              position: "absolute",
-              width: "10px",
-              height: "10px",
-              backgroundColor: "#fff",
-              border: "1px solid #ccc",
-              transform: "rotate(45deg)",
-              borderBottom: "none",
-              borderRight: "none",
-              ...(adjustedPlacement === "top" && { bottom: "-5px", left: "50%", transform: "translateX(-50%) rotate(45deg)" }),
-              ...(adjustedPlacement === "bottom" && { top: "-5px", left: "50%", transform: "translateX(-50%) rotate(45deg)" }),
-              ...(adjustedPlacement === "left" && { right: "-5px", top: "50%", transform: "translateY(-50%) rotate(45deg)" }),
-              ...(adjustedPlacement === "right" && { left: "-5px", top: "50%", transform: "translateY(-50%) rotate(45deg)" }),
-            }}
-          />
+         
           {content}
         </div>
       )}
     </div>
   );
 }
-
-/*
-import BasicPopover from "~/components/BasicPopover";
-
-<BasicPopover content="Hello, this is a custom popover!" placement="bottom">
-  <Button color="primary">点我</Button>
-</BasicPopover>
-*/

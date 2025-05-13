@@ -3,6 +3,7 @@
 import { useCallback, useEffect } from "react";
 import { debounce } from "lodash";
 import { setRemBase as rawSetRemBase } from "~/lib/utils/common";
+import qs from 'qs';
 
 export default function Provider({ children }: { children: React.ReactNode }) {
   const setRemBase = useCallback(() => {
@@ -12,8 +13,17 @@ export default function Provider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // ✅ 确保 `window` 可用 (防止 SSR 运行)
     if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
-      console.log("开启调试工具");
-      import("eruda").then((eruda) => eruda.default.init()); // ✅ 仅在客户端动态加载 `eruda`
+      // const params = window.location.href;
+      const queryString = window.location.search;
+      const queryParams = qs.parse(queryString, { ignoreQueryPrefix: true });
+
+      if (process.env.NODE_ENV === "development" || queryParams.eruda === "dev") {
+        console.log("开启调试工具", queryParams);
+        import("eruda").then((eruda) => eruda.default.init()); // ✅ 仅在客户端动态加载 `eruda`
+      }
+
+      // console.log("开启调试工具", queryParams);
+      // import("eruda").then((eruda) => eruda.default.init()); // ✅ 仅在客户端动态加载 `eruda`
     }
 
     // ✅ 初始化 rem 适配
@@ -41,7 +51,7 @@ export default function Provider({ children }: { children: React.ReactNode }) {
         requestAnimationFrame(handleResize); // ✅ 替代 `setTimeout`，确保无延迟优化
       });
     };
-  }, [setRemBase, searchParams]);
+  }, [setRemBase]);
 
   useEffect(() => {
     const registerServiceWorker = async () => {
@@ -49,24 +59,24 @@ export default function Provider({ children }: { children: React.ReactNode }) {
         console.warn("Service Worker is not supported in this browser.");
         return;
       }
-  
+
       try {
         const registration = await navigator.serviceWorker.register("/sw.js");
         console.log("✅ Service Worker registered:", registration);
-  
+
         // ✅ 监听 `controllerchange` 事件，确保 Service Worker 激活
         navigator.serviceWorker.addEventListener("controllerchange", () => {
           console.log("✅ Service Worker 控制变更，已激活");
         });
-  
+
       } catch (error) {
         console.error("❌ Service Worker 注册失败:", error);
       }
     };
-  
+
     registerServiceWorker();
   }, []);
-  
+
 
   return <>{children}</>;
 }
