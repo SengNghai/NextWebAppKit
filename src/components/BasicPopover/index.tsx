@@ -34,43 +34,43 @@ export default function Popover({ content, trigger = "click", placement = "right
   // ✅ 计算 Popover 位置，防止内容溢出屏幕
   useEffect(() => {
     if (!popoverRef.current || !buttonRef.current) return;
-  
+
     const popoverRect = popoverRef.current.getBoundingClientRect();
     const buttonRect = buttonRef.current.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
-  
+
     let left = buttonRect.left + buttonRect.width / 2 - popoverRect.width / 2; // 默认居中
     let top = buttonRect.bottom + 10; // 默认下方弹出
-  
+
     // ✅ 按钮贴近左侧时，固定 Popover 在 `left: 10px`
     if (buttonRect.left < 20) {
       left = 10;
     }
-  
+
     // ✅ 按钮贴近右侧时，避免 Popover 过度溢出
     if (popoverRect.right > viewportWidth) {
       left = viewportWidth - popoverRect.width - 10;
     }
-  
+
     // ✅ 按钮贴近底部时，调整 Popover 到按钮上方
     if (popoverRect.bottom > viewportHeight) {
       top = buttonRect.top - popoverRect.height - 10;
     }
-  
+
     setAdjustedStyles({ top: `${top}px`, left: `${left}px` });
   }, [visible]);
-  
-  
+
+
 
   return (
     <div style={{ position: "relative", display: "inline-block" }} ref={buttonRef} onClick={handleToggle} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <div className="relative">
-      {children}
-       {/* ✅ 气泡箭头，始终对齐按钮中心 */}
-      
-      {visible && (
-        <div
+        {children}
+        {/* ✅ 气泡箭头，始终对齐按钮中心 */}
+
+        {visible && (
+          <div
             style={{
               position: "absolute",
               width: "10px",
@@ -80,17 +80,17 @@ export default function Popover({ content, trigger = "click", placement = "right
               zIndex: 999,
               left: "50%",
               transform: "translateX(-50%) rotate(45deg)"
-                // ...(placement === "bottom" && { top: "-5px", left: "50%", transform: "translateX(-50%) rotate(45deg)" }),
+              // ...(placement === "bottom" && { top: "-5px", left: "50%", transform: "translateX(-50%) rotate(45deg)" }),
               // ...(placement === "top" && { bottom: "15px", left: "50%", transform: "translateX(-50%) rotate(45deg)" }),
               // ...(placement === "bottom" && { top: "-5px", left: "50%", transform: "translateX(-50%) rotate(45deg)" }),
               // ...(placement === "left" && { right: "-5px", top: "50%", transform: "translateY(-50%) rotate(45deg)" }),
               // ...(placement === "right" && { left: "-5px", top: "50%", transform: "translateY(-50%) rotate(45deg)" }),
             }}
           />
-      )}
-       
+        )}
+
       </div>
-      
+
       {visible && (
         <div
           ref={popoverRef}
@@ -111,7 +111,7 @@ export default function Popover({ content, trigger = "click", placement = "right
             ...(placement === "right" && { left: "100%", top: "50%", transform: "translateY(-50%)" }),
           }}
         >
-         
+
           {content}
         </div>
       )}
